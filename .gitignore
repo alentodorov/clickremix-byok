@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output
+extension/dist/
+
+# Chrome-generated metadata
+_metadata/
+
+# Tailwind generated files (in src during dev)
+extension/src/tailwind.css
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Xcode / Safari
+**/xcuserdata/
+*.xcuserstate
+*.app/
+
+# Wrangler / Cloudflare
+.wrangler/
+.dev.vars
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Editor directories
+.idea/
+.vscode/
+*.swp
+*.swo

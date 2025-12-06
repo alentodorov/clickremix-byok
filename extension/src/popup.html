@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>ClickRemix</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        />
+        <link rel="stylesheet" href="tailwind.css" />
+        <link rel="stylesheet" href="popup.css" />
+        <script src="vendor/basecoat.min.js" defer></script>
+        <script src="vendor/dropdown-menu.min.js" defer></script>
+        <script src="ratelimit.js"></script>
+        <script type="module" src="popup.js"></script>
+    </head>
+
+    <body
+        x-data="popupApp"
+        x-init="init()"
+        class="w-[420px] bg-muted/60 p-4 text-foreground"
+    >
+        <div class="card gap-5 shadow-lg bg-background" x-cloak>
+            <header class="flex items-start justify-between gap-4">
+                <div class="flex items-start gap-3">
+                    <div
+                        class="inline-flex h-[48px] w-[48px] items-center justify-center rounded-full border border-primary/30 bg-primary text-primary-foreground shadow-xs"
+                        aria-hidden="true"
+                    >
+                        <svg
+                            id="logo-icon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            class="h-7 w-7"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M14 4.1 12 6"></path>
+                            <path d="m5.1 8-2.9-.8"></path>
+                            <path d="m6 12-1.9 2"></path>
+                            <path d="M7.2 2.2 8 5.1"></path>
+                            <path
+                                d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"
+                            ></path>
+                        </svg>
+                    </div>
+                    <div class="space-y-0">
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-lg font-semibold tracking-tight">
+                                ClickRemix
+                            </h1>
+                            <span class="badge-secondary">BYOK</span>
+                        </div>
+                        <p class="text-sm text-muted-foreground">
+                            Remix websites with AI.
+                        </p>
+                    </div>
+                </div>
+                <button
+                    id="btn-reset"
+                    type="button"
+                    class="btn-sm-outline"
+                    title="Disable all styles for this site"
+                    @click="resetStyles"
+                >
+                    <i
+                        class="fa-solid fa-arrow-rotate-left"
+                        aria-hidden="true"
+                    ></i>
+                    <span>Reset</span>
+                </button>
+            </header>
+
+            <main class="space-y-4 px-6">
+                <section class="space-y-3 pb-2">
+                    <div class="space-y-2">
+                        <div class="relative">
+                            <textarea
+                                id="instruction"
+                                x-ref="instruction"
+                                class="border border-border textarea min-h-[96px] max-h-80 w-full text-sm resize-y overflow-auto pr-14 bg-primary-foreground [field-sizing:content-box]"
+                                :placeholder="refiningStyle ? 'How should the AI refine this style? (e.g., &quot;replace this too...&quot;, &quot;except images&quot;)' : 'Describe the changes you want, or select a specific element using the target icon.'"
+                                x-model="instruction"
+                                @keydown="handleInstructionKeydown"
+                                :disabled="applyBusy || targetBusy"
+                            ></textarea>
+                            <button
+                                id="btn-target-mode"
+                                type="button"
+                                class="btn-icon-ghost absolute right-2 top-2 h-9 w-9 rounded-full border border-muted-foreground/10 bg-card shadow-xs transition"
+                                title="Select page element"
+                                @click="toggleTargetMode"
+                                :aria-pressed="targetModeActive"
+                                :aria-busy="targetBusy"
+                                :class="targetModeActive
+                ? 'bg-secondary border-secondary text-secondary-foreground hover:bg-secondary/80'
+                : 'bg-card border-muted-foreground/10 text-foreground hover:bg-muted/80'"
+                            >
+                                <span class="sr-only"
+                                    >Select a target element</span
+                                >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    class="h-5 w-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M14 4.1 12 6"></path>
+                                    <path d="m5.1 8-2.9-.8"></path>
+                                    <path d="m6 12-1.9 2"></path>
+                                    <path d="M7.2 2.2 8 5.1"></path>
+                                    <path
+                                        d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"
+                                    ></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div
+                            class="flex items-center justify-between gap-2 text-[11px] font-medium text-muted-foreground"
+                        >
+                            <span
+                                id="target-hint"
+                                class="leading-tight"
+                                x-text="targetHint"
+                            ></span>
+                            <div class="flex items-center gap-2">
+                                <!-- Target selection chip -->
+                                <div
+                                    id="target-chip"
+                                    class="inline-flex items-center gap-1 rounded-full border border-muted-foreground/30 bg-card px-2 py-1 text-[11px] text-foreground shadow-xs max-w-[220px] overflow-hidden"
+                                    x-show="selectedTarget"
+                                    x-cloak
+                                    x-transition
+                                >
+                                    <span
+                                        id="target-chip-label"
+                                        class="truncate whitespace-nowrap max-w-[180px]"
+                                        x-text="targetChipLabel"
+                                        :title="targetChipLabel"
+                                    ></span>
+                                    <button
+                                        id="target-clear"
+                                        type="button"
+                                        class="btn-icon-ghost h-5 w-5 p-0 text-muted-foreground/80 shrink-0"
+                                        title="Remove target"
+                                        @click="clearTargetSelection(true)"
+                                    >
+                                        <span class="sr-only"
+                                            >Remove target</span
+                                        >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            class="h-3.5 w-3.5"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <path d="M18 6 6 18"></path>
+                                            <path d="m6 6 12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        id="btn-apply"
+                        class="btn-primary w-full justify-center gap-2"
+                        :aria-busy="applyBusy"
+                        :disabled="applyBusy || !activeTabId"
+                        @click="applyInstruction"
+                    >
+                        <span
+                            class="apply-icon inline-flex items-center justify-center"
+                            aria-hidden="true"
+                        >
+                            <svg
+                                x-show="!applyBusy"
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-5 w-5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M20 6 9 17l-5-5"></path>
+                            </svg>
+                            <i
+                                x-show="applyBusy"
+                                class="fa-solid fa-rotate text-base animate-spin opacity-80"
+                            ></i>
+                        </span>
+                        <span
+                            class="apply-label"
+                            x-text="applyBusy ? (refiningStyle ? 'Refining...' : 'Generating...') : (refiningStyle ? 'Refine style' : 'Apply change')"
+                            >Apply change</span
+                        >
+                    </button>
+                </section>
+
+                <section id="style-list-container" class="flex flex-col gap-3">
+                    <div
+                        id="status"
+                        class="w-full -mt-3"
+                        x-show="status.text"
+                        x-transition
+                    >
+                        <div
+                            :class="statusClasses"
+                            style="
+                                grid-template-columns: auto 1fr;
+                                column-gap: 6px;
+                            "
+                        >
+                            <i
+                                :class="statusIconClass + ' fa-fw text-lg shrink-0 mt-0.5'"
+                                aria-hidden="true"
+                            ></i>
+                            <h2 x-text="status.text"></h2>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-baseline gap-2">
+                            <h3 class="text-base font-semibold">
+                                Saved styles
+                            </h3>
+                            <span
+                                id="style-hostname"
+                                class="text-xs font-semibold text-muted-foreground opacity-70"
+                                x-text="hostname ? '(' + hostname + ')' : ''"
+                            ></span>
+                        </div>
+                    </div>
+                    <div
+                        id="style-list"
+                        class="flex flex-col gap-4"
+                        x-show="styles.length > 0"
+                    >
+                        <template x-for="style in styles" :key="style.id">
+                            <div
+                                class="group relative flex w-full items-center gap-3 rounded-lg border bg-card px-4 py-3 shadow-xs transition overflow-visible hover:bg-primary/10 hover:border-primary/70 hover:shadow-sm cursor-pointer"
+                                :class="[!style.enabled ? 'bg-muted/50 border-border/50' : '', isRefining(style) ? 'border-primary/70 bg-primary/10 shadow-sm ring-3 ring-primary/20' : '']"
+                                @click="toggleRefiningFromCard(style)"
+                            >
+                                <div
+                                    class="flex items-center gap-3 min-w-0 flex-1"
+                                >
+                                    <label
+                                        class="inline-flex shrink-0 items-center justify-center"
+                                        @click.stop
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            class="input"
+                                            role="switch"
+                                            :checked="style.enabled"
+                                            :aria-label="'Toggle ' + style.summary"
+                                            @change="toggleStyle(style, $event)"
+                                        />
+                                    </label>
+                                    <div class="min-w-0 flex-1 overflow-hidden">
+                                        <p
+                                            class="text-sm font-semibold text-muted-foreground group-hover:text-primary"
+                                            :class="[style.enabled ? 'text-foreground' : 'text-muted-foreground', isRefining(style) ? 'text-primary' : '']"
+                                            x-text="style.summary"
+                                        ></p>
+                                        <p
+                                            x-show="isRefining(style)"
+                                            class="text-xs text-primary mt-0.5"
+                                        >
+                                            Refining... Click to cancel
+                                        </p>
+                                    </div>
+                                    <div
+                                        class="dropdown-menu relative shrink-0"
+                                        :id="'style-menu-' + style.id"
+                                    >
+                                        <button
+                                            type="button"
+                                            class="btn-ghost h-8 w-8 p-0 flex items-center justify-center"
+                                            :id="'style-menu-trigger-' + style.id"
+                                            aria-haspopup="menu"
+                                            :aria-controls="'style-menu-list-' + style.id"
+                                            aria-expanded="false"
+                                            @click.stop
+                                        >
+                                            <span class="sr-only"
+                                                >Style actions</span
+                                            >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="20"
+                                                height="20"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                aria-hidden="true"
+                                            >
+                                                <circle
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="1"
+                                                ></circle>
+                                                <circle
+                                                    cx="12"
+                                                    cy="5"
+                                                    r="1"
+                                                ></circle>
+                                                <circle
+                                                    cx="12"
+                                                    cy="19"
+                                                    r="1"
+                                                ></circle>
+                                            </svg>
+                                        </button>
+                                        <div
+                                            :id="'style-menu-popover-' + style.id"
+                                            data-popover
+                                            aria-hidden="true"
+                                            class="absolute right-0 top-full mt-2 min-w-[8rem] max-h-[60vh] overflow-auto rounded-md border bg-popover text-popover-foreground shadow-lg z-[60] -left-25"
+                                        >
+                                            <div
+                                                role="menu"
+                                                :id="'style-menu-list-' + style.id"
+                                                :aria-labelledby="'style-menu-trigger-' + style.id"
+                                                class="flex flex-col"
+                                            >
+                                                <button
+                                                    type="button"
+                                                    role="menuitem"
+                                                    class="flex w-full items-center gap-2 px-3 py-2 text-sm text-left hover:bg-muted"
+                                                    @click.stop.prevent="refineStyleFromMenu(style)"
+                                                >
+                                                    <i
+                                                        class="fa-solid fa-wand-magic-sparkles text-[13px]"
+                                                    ></i>
+                                                    <span
+                                                        x-text="isRefining(style) ? 'Stop refining' : 'Refine with AI'"
+                                                    ></span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    role="menuitem"
+                                                    class="flex w-full items-center gap-2 px-3 py-2 text-sm text-left hover:bg-muted"
+                                                    @click.stop.prevent="editStyleFromMenu(style)"
+                                                >
+                                                    <i
+                                                        class="fa-solid fa-pen-to-square text-[13px]"
+                                                    ></i>
+                                                    <span>Edit</span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    role="menuitem"
+                                                    class="flex w-full items-center gap-2 px-3 py-2 text-sm text-left text-destructive hover:bg-destructive/10"
+                                                    @click.stop.prevent="deleteStyleFromMenu(style)"
+                                                >
+                                                    <i
+                                                        class="fa-solid fa-trash text-[13px]"
+                                                    ></i>
+                                                    <span>Delete</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Delete confirmation modal overlay -->
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center rounded-[15px] bg-destructive"
+                                    x-show="deletingStyleId === style.id"
+                                    x-transition
+                                    x-cloak
+                                    @click.stop
+                                >
+                                    <div class="flex items-center gap-3 px-4">
+                                        <i
+                                            class="fa-solid fa-triangle-exclamation text-lg text-white"
+                                        ></i>
+                                        <span
+                                            class="text-sm font-semibold text-white"
+                                            >Remove this style?</span
+                                        >
+                                        <div
+                                            class="button-group ml-2"
+                                            role="group"
+                                        >
+                                            <button
+                                                class="btn-icon-outline"
+                                                title="Confirm delete"
+                                                @click="confirmDelete()"
+                                            >
+                                                <i
+                                                    class="fa-solid fa-check text-sm"
+                                                ></i>
+                                            </button>
+                                            <button
+                                                class="btn-icon-outline"
+                                                title="Cancel"
+                                                @click="cancelDelete()"
+                                            >
+                                                <i
+                                                    class="fa-solid fa-xmark"
+                                                ></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <template x-if="styles.length === 0">
+                        <div
+                            class="flex min-w-0 flex-col items-center justify-center gap-4 rounded-lg border bg-card px-4 py-6 shadow-xs text-center"
+                        >
+                            <header
+                                class="flex max-w-sm flex-col items-center gap-2 text-center"
+                            >
+                                <div
+                                    class="mb-1 flex size-10 shrink-0 items-center justify-center bg-muted rounded-full text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path d="M14 4.1 12 6"></path>
+                                        <path d="m5.1 8-2.9-.8"></path>
+                                        <path d="m6 12-1.9 2"></path>
+                                        <path d="M7.2 2.2 8 5.1"></path>
+                                        <path
+                                            d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col gap-0">
+                                    <h3
+                                        class="text-base font-medium tracking-tight"
+                                    >
+                                        No saved styles yet
+                                    </h3>
+                                    <p
+                                        class="text-muted-foreground text-xs/relaxed"
+                                    >
+                                        Try one of these starter examples to get
+                                        going.
+                                    </p>
+                                </div>
+                            </header>
+                            <section
+                                class="flex w-full flex-col items-stretch gap-3"
+                            >
+                                <template
+                                    x-for="example in starterExamples"
+                                    :key="example.title"
+                                >
+                                    <button
+                                        type="button"
+                                        class="group relative flex w-full flex-col items-stretch gap-1.5 rounded-lg border bg-card px-3.5 py-2.5 text-left shadow-xs transition-all hover:bg-muted/60 cursor-pointer"
+                                        @click="applyExample(example)"
+                                    >
+                                        <div
+                                            class="flex items-start justify-between gap-2"
+                                        >
+                                            <p
+                                                class="text-sm font-medium text-foreground leading-snug"
+                                                x-text="example.title"
+                                            ></p>
+                                            <span
+                                                class="badge-outline text-[11px] shrink-0"
+                                                >Try it</span
+                                            >
+                                        </div>
+                                        <p
+                                            class="text-xs text-muted-foreground leading-relaxed"
+                                            x-text="example.description"
+                                        ></p>
+                                    </button>
+                                </template>
+                            </section>
+                        </div>
+                    </template>
+                </section>
+
+                <!-- Message Count Display -->
+                <section class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <p class="text-xs text-muted-foreground">
+                            Messages sent this month:
+                        </p>
+                        <span
+                            class="badge-outline text-[11px] inline-flex items-center gap-1.5 bg-primary-foreground"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                class="h-3 w-3"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M14 4.1 12 6"></path>
+                                <path d="m5.1 8-2.9-.8"></path>
+                                <path d="m6 12-1.9 2"></path>
+                                <path d="M7.2 2.2 8 5.1"></path>
+                                <path
+                                    d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"
+                                ></path>
+                            </svg>
+                            <span x-text="rateLimitStatus.monthlyUsed"></span>
+                        </span>
+                    </div>
+                    <button
+                        type="button"
+                        class="btn-sm-outline"
+                        title="Settings"
+                        @click="openSettings"
+                    >
+                        <i class="fa-solid fa-gear" aria-hidden="true"></i>
+                        <span>Settings</span>
+                    </button>
+                </section>
+            </main>
+        </div>
+
+        <div
+            id="style-editor"
+            class="fixed inset-0 z-50 bg-black/40 px-4 py-6 text-foreground backdrop-blur-sm transition"
+            x-show="editorOpen"
+            @click.self="closeEditor"
+            @keydown.escape.window="closeEditor"
+            tabindex="-1"
+            x-transition
+            x-cloak
+        >
+            <div
+                class="mx-auto flex h-full max-w-2xl flex-col rounded-xl border bg-card shadow-xl"
+            >
+                <div
+                    class="flex items-start justify-between border-b px-5 py-4"
+                >
+                    <div>
+                        <p class="text-base font-semibold">Edit style</p>
+                        <p
+                            id="editor-title"
+                            class="text-xs text-muted-foreground"
+                            x-text="editorTitleText"
+                        >
+                            Customize this style with code.
+                        </p>
+                    </div>
+                    <button
+                        id="editor-close"
+                        class="btn-icon-ghost"
+                        title="Close editor"
+                        @click="closeEditor"
+                    >
+                        <i class="fa-solid fa-xmark text-base"></i>
+                    </button>
+                </div>
+
+                <div class="flex-1 space-y-4 overflow-y-auto px-5 py-4">
+                    <div class="space-y-2">
+                        <div
+                            class="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
+                        >
+                            <span>CSS</span>
+                            <span class="text-muted-foreground/80"
+                                >Changes apply immediately</span
+                            >
+                        </div>
+                        <textarea
+                            id="editor-css"
+                            class="textarea min-h-[160px] max-h-80 w-full font-mono text-xs resize-y overflow-auto [field-sizing:content-box]"
+                            spellcheck="false"
+                            x-model="editorCss"
+                        ></textarea>
+                    </div>
+                    <div class="space-y-2">
+                        <div
+                            class="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
+                        >
+                            JavaScript
+                        </div>
+                        <textarea
+                            id="editor-js"
+                            class="textarea min-h-[160px] max-h-80 w-full font-mono text-xs resize-y overflow-auto [field-sizing:content-box]"
+                            spellcheck="false"
+                            x-model="editorJs"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div
+                    class="flex items-center justify-between gap-3 border-t px-5 py-4"
+                >
+                    <p
+                        id="editor-status"
+                        class="text-sm text-muted-foreground"
+                        :class="editorStatusType === 'error' ? 'text-rose-600' : editorStatusType === 'success' ? 'text-lime-600' : 'text-muted-foreground'"
+                        x-text="editorStatus"
+                    ></p>
+                    <div class="flex items-center gap-2">
+                        <button
+                            id="editor-cancel"
+                            class="btn-secondary"
+                            @click="closeEditor"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            id="editor-save"
+                            class="btn-primary"
+                            :aria-busy="editorSaving"
+                            :disabled="editorSaving"
+                            @click="saveEditor"
+                        >
+                            <span x-text="editorSaving ? 'Saving...' : 'Save'"
+                                >Save</span
+                            >
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            id="settings-modal"
+            class="fixed inset-0 z-50 bg-black/40 px-4 py-6 text-foreground backdrop-blur-sm transition"
+            x-show="settingsOpen"
+            @click.self="closeSettings"
+            @keydown.escape.window="closeSettings"
+            tabindex="-1"
+            x-transition
+            x-cloak
+        >
+            <div
+                class="mx-auto flex h-full max-w-xl flex-col rounded-xl border bg-card shadow-xl"
+            >
+                <div
+                    class="flex items-start justify-between border-b px-5 py-4"
+                >
+                    <div class="flex items-start gap-3">
+                        <div
+                            class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-secondary/30 bg-secondary text-secondary-foreground shadow-xs"
+                            aria-hidden="true"
+                        >
+                            <i class="fa-solid fa-gear text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-base font-semibold">Settings</p>
+                            <p class="text-xs text-muted-foreground">
+                                Configure your OpenRouter Connection
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        id="settings-close"
+                        class="btn-icon-ghost"
+                        title="Close settings"
+                        @click="closeSettings"
+                    >
+                        <i class="fa-solid fa-xmark text-base"></i>
+                    </button>
+                </div>
+
+                <div class="flex-1 space-y-4 overflow-y-auto px-5 py-4">
+                    <div class="space-y-2">
+                        <label
+                            for="api-key"
+                            class="text-sm font-semibold text-foreground"
+                        >
+                            OpenRouter API Key
+                            <span class="text-destructive">*</span>
+                        </label>
+                        <input
+                            id="api-key"
+                            type="password"
+                            class="border border-border input w-full text-sm bg-primary-foreground"
+                            placeholder="sk-or-v1-..."
+                            x-model="settingsApiKey"
+                        />
+                        <p class="text-xs text-muted-foreground">
+                            Get your API key from
+                            <a
+                                href="https://openrouter.ai/keys"
+                                target="_blank"
+                                class="text-secondary hover:underline"
+                                >openrouter.ai/keys</a
+                            >
+                        </p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label
+                            for="model"
+                            class="text-sm font-semibold text-foreground"
+                        >
+                            Model (Optional)
+                        </label>
+                        <input
+                            id="model"
+                            type="text"
+                            class="border border-border input w-full text-sm bg-primary-foreground"
+                            placeholder="openai/gpt-5.1-codex-mini"
+                            x-model="settingsModel"
+                        />
+                        <p class="text-xs text-muted-foreground">
+                            Leave empty to use the default. Coding models work
+                            best. See
+                            <a
+                                href="https://openrouter.ai/models?categories=programming&fmt=cards&order=top-weekly"
+                                target="_blank"
+                                class="text-secondary hover:underline"
+                                >programming models</a
+                            >
+                        </p>
+                    </div>
+
+                    <div
+                        class="rounded-lg border border-border bg-card px-4 py-3 space-y-2"
+                    >
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-semibold">Status</span>
+                            <span
+                                class="badge-outline text-[11px]"
+                                :class="settingsApiKey ? 'bg-secondary/10 text-secondary border-secondary' : 'bg-muted text-muted-foreground'"
+                                x-text="settingsApiKey ? 'Configured' : 'Not configured'"
+                            ></span>
+                        </div>
+                        <p
+                            class="text-xs text-muted-foreground leading-relaxed"
+                        >
+                            <span x-show="!settingsApiKey"
+                                >Enter your OpenRouter API key to start using
+                                ClickRemix BYOK.</span
+                            >
+                            <span x-show="settingsApiKey"
+                                >Your API key is saved locally in your browser
+                                and never shared.</span
+                            >
+                        </p>
+                    </div>
+
+                    <div
+                        class="flex items-center gap-2"
+                        x-show="settingsStatusMessage"
+                        x-transition
+                    >
+                        <div
+                            class="flex-1 text-sm"
+                            :class="settingsStatusType === 'success' ? 'text-secondary' : 'text-destructive'"
+                            x-text="settingsStatusMessage"
+                        ></div>
+                    </div>
+                </div>
+
+                <div
+                    class="flex items-center justify-end gap-2 border-t px-5 py-4"
+                >
+                    <button
+                        id="settings-cancel"
+                        class="btn-secondary"
+                        @click="closeSettings"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        id="settings-save"
+                        class="btn-primary"
+                        :disabled="settingsSaving"
+                        @click="saveSettings"
+                    >
+                        <span x-text="settingsSaving ? 'Saving...' : 'Save'"
+                            >Save</span
+                        >
+                    </button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

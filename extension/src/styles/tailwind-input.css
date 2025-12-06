@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@import "basecoat-css";
+@source "../theme.css";
+@source "../popup.html";
+@source "../popup.js";
