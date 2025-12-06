@@ -655,7 +655,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           console.error("ClickRemix Error:", response.error);
           chrome.runtime.sendMessage({
             type: "STATUS_UPDATE",
-            text: "Error generating styles.",
+            text: response.error || "Error generating styles.",
             statusType: "error",
           });
         }
@@ -739,7 +739,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             console.error("ClickRemix Error:", response.error);
             chrome.runtime.sendMessage({
               type: "STATUS_UPDATE",
-              text: "Error refining style.",
+              text: response.error || "Error refining style.",
               statusType: "error",
             });
           }

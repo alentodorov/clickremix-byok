@@ -235,7 +235,17 @@
                                 :class="statusIconClass + ' fa-fw text-lg shrink-0 mt-0.5'"
                                 aria-hidden="true"
                             ></i>
-                            <h2 x-text="status.text"></h2>
+                            <div>
+                                <h2 x-text="status.text"></h2>
+                                <button
+                                    x-show="status.isApiKeyError"
+                                    type="button"
+                                    class="text-sm underline hover:no-underline mt-1"
+                                    @click="openSettings"
+                                >
+                                    Open Settings
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="flex items-center justify-between">

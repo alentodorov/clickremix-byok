@@ -55,7 +55,7 @@ function popupApp() {
     targetBusy: false,
     applyBusy: false,
     styles: [],
-    status: { text: "", type: "normal", persist: false },
+    status: { text: "", type: "normal", persist: false, isApiKeyError: false },
     statusTimer: null,
     suppressTargetClearStatus: false,
     deletingStyleId: null,
@@ -137,7 +137,16 @@ function popupApp() {
 
     handleStatusUpdate(message) {
       this.applyBusy = false;
-      this.setStatus(message.text, message.statusType);
+
+      // Check if error is about missing API key and add settings link
+      let statusText = message.text;
+      let isApiKeyError = false;
+      if (message.statusType === "error" && message.text &&
+          (message.text.includes("No API key") || message.text.includes("API key"))) {
+        isApiKeyError = true;
+      }
+
+      this.setStatus(statusText, message.statusType, false, isApiKeyError);
       if (message.statusType !== "success") return;
 
       // Set ON badge when style is successfully applied
@@ -361,19 +370,19 @@ function popupApp() {
       });
     },
 
-    setStatus(msg, type = "normal", persist = false) {
+    setStatus(msg, type = "normal", persist = false, isApiKeyError = false) {
       if (this.statusTimer) {
         clearTimeout(this.statusTimer);
         this.statusTimer = null;
       }
       if (!msg) {
-        this.status = { text: "", type: "normal", persist: false };
+        this.status = { text: "", type: "normal", persist: false, isApiKeyError: false };
         return;
       }
-      this.status = { text: msg, type, persist };
+      this.status = { text: msg, type, persist, isApiKeyError };
       if (!persist) {
         this.statusTimer = setTimeout(() => {
-          this.status = { text: "", type: "normal", persist: false };
+          this.status = { text: "", type: "normal", persist: false, isApiKeyError: false };
           this.statusTimer = null;
         }, 3200);
       }

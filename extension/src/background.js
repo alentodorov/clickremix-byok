@@ -146,9 +146,12 @@ async function callRemixAPI(
 ) {
   // Get API key and model from storage
   const settings = await new Promise((resolve) => {
-    chrome.storage.sync.get(["openrouter_api_key", "openrouter_model"], (result) => {
-      resolve(result);
-    });
+    chrome.storage.sync.get(
+      ["openrouter_api_key", "openrouter_model"],
+      (result) => {
+        resolve(result);
+      },
+    );
   });
 
   const apiKey = settings.openrouter_api_key;
@@ -158,7 +161,7 @@ async function callRemixAPI(
     logger.error("No API key configured");
     return {
       success: false,
-      error: "No API key configured. Please add your OpenRouter API key in settings.",
+      error: "No OpenRouter API key configured.",
     };
   }
 
@@ -189,7 +192,7 @@ async function callRemixAPI(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey}`,
         "HTTP-Referer": chrome.runtime.getURL(""),
         "X-Title": "ClickRemix BYOK",
       },
@@ -214,8 +217,9 @@ async function callRemixAPI(
     let parsedResponse;
     try {
       // Extract JSON from markdown code blocks if present
-      const jsonMatch = content.match(/```json\n?([\s\S]*?)\n?```/) ||
-                       content.match(/```\n?([\s\S]*?)\n?```/);
+      const jsonMatch =
+        content.match(/```json\n?([\s\S]*?)\n?```/) ||
+        content.match(/```\n?([\s\S]*?)\n?```/);
       const jsonStr = jsonMatch ? jsonMatch[1] : content;
       parsedResponse = JSON.parse(jsonStr);
     } catch (parseError) {
