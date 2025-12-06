@@ -1,6 +1,6 @@
 # ClickRemix (BYOK Version)
 
-An open-source Chrome extension that lets you restyle or tweak any webpage with natural-language prompts. It works with your own OpenRouter API key so you can use any AI model to generate the CSS and JavaScript changes. You only pay for the generation step; applying the saved code costs nothing further. If you prefer not to use a personal key, you can switch to the hosted version at [ClickRemix](https://clickremix.com/).
+An open-source Browser extension (Chrome, Safari) that lets you restyle or tweak any webpage with natural-language prompts. It works with your own OpenRouter API key so you can use any AI model to generate the CSS and JavaScript changes. You only pay for the generation step; applying the saved code costs nothing further. If you prefer not to use a personal key, you can switch to the hosted version at [ClickRemix](https://clickremix.com/).
 
 
 
@@ -75,6 +75,17 @@ This compiles Tailwind CSS and creates the extension in the `extension/dist/` di
 1. Open Chrome and navigate to `chrome://extensions`
 2. Enable "Developer mode" (toggle in top-right)
 3. Click "Load unpacked" and select the `extension/dist/` directory
+
+### 3 (Alternative). Load in Safari
+
+1. Open Safari and go to **Safari** → **Settings** (or **Preferences**)
+2. Navigate to the **Advanced** tab
+3. Check **"Show features for web developers"** (or **"Show Develop menu in menu bar"**)
+4. Go to **Develop** → **Allow Unsigned Extensions** (this must be enabled each time you restart Safari)
+5. Open **Safari** → **Settings** → **Extensions**
+6. Click the **"+"** button at the bottom left
+7. Navigate to and select the `extension/dist/` directory
+8. Enable the ClickRemix BYOK extension in the extensions list
 
 ### 4. Configure Your API Key
 
