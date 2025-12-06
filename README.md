@@ -1,16 +1,17 @@
-# ClickRemix BYOK (Bring Your Own Key Version)
+# ClickRemix (BYOK Version)
 
-An open-source Chrome extension that allows you to restyle and modify any webpage using natural language instructions. Uses your own OpenRouter API key to leverage powerful AI models for generating CSS and JavaScript modifications.
+An open-source Chrome extension that lets you restyle or tweak any webpage with natural-language prompts. It works with your own OpenRouter API key so you can use any AI model to generate the CSS and JavaScript changes. You only pay for the generation step; applying the saved code costs nothing further. If you prefer not to use a personal key, you can switch to the hosted version at [ClickRemix](https://clickremix.com/).
+
+
 
 ## Features
 
-- 🎨 Modify any website with natural language instructions
-- 🔑 Use your own OpenRouter API key (no subscriptions, no limits)
-- 🎯 Target specific elements on the page
-- 💾 Save and manage multiple styles per site
-- 🔄 Refine existing styles with follow-up instructions
-- ✏️ Manually edit generated CSS and JavaScript
-- 🌙 Built with Alpine.js, Tailwind, Basecoat (for components)
+- Modify any website with natural language instructions
+- Use your own OpenRouter API key (no subscriptions, no limits)
+- Target specific elements on the page
+- Save and manage multiple styles per site
+- Refine existing styles with follow-up instructions
+- Manually edit generated CSS and JavaScript
 
 ## Project Structure
 
@@ -35,10 +36,6 @@ clickremix-byok/
 │   │
 │   └── dist/                   # Built extension (auto-generated)
 │
-├── extension/
-│   └── src/
-│       └── scripts/
-│           └── generate-icons.js  # Icon generator script
 └── package.json
 ```
 
@@ -49,7 +46,7 @@ clickremix-byok/
 3. **AI Processing**: Your instruction is sent to OpenRouter's API using your API key, which returns:
    - **CSS**: For visual styling changes
    - **JavaScript**: For DOM manipulation (when needed)
-   - **Summary**: A short description of the applied style
+   - **Title**: A short title of the applied style
 4. **Injection**: The generated code is injected into the page and persists across reloads
 
 ## Setup
@@ -98,7 +95,7 @@ This compiles Tailwind CSS and creates the extension in the `extension/dist/` di
 
 ### Advanced Features
 
-- **Target Specific Elements**: Click the target icon (🎯) to select a specific element to modify
+- **Target Specific Elements**: Click the target icon to select a specific element to modify
 - **Refine Styles**: Click on any saved style card to refine it with additional instructions
 - **Edit Code**: Use the menu (⋮) on any style to manually edit the CSS or JavaScript
 - **Track Usage**: See how many API calls you've made this month at the bottom of the popup
@@ -122,14 +119,6 @@ This watches `extension/src/` and automatically rebuilds on file changes. Just r
 | `npm run build` | Production build to `extension/dist/` |
 | `npm run dev` | Development mode: watch and rebuild on changes |
 | `npm run sync:alpine` | Update vendored Alpine.js |
-
-### Regenerate Icons
-
-To regenerate the green extension icons:
-
-```bash
-node extension/src/scripts/generate-icons.js
-```
 
 ## Architecture
 
@@ -171,14 +160,13 @@ Inject CSS/JS into Page
 This extension uses your own OpenRouter API key, so you only pay for what you use:
 
 - Typical request: ~$0.01-0.05 (depending on model and page complexity)
-- Models available: Claude, GPT-4, Llama, and [many more](https://openrouter.ai/docs/models)
-- No monthly fees, no subscriptions, just pay-per-use
+- Models available: Claude, GPT-5, Grok, and [many more](https://openrouter.ai/docs/models)
 
 ## Privacy & Security
 
-- ✅ Your API key is stored **locally** in your browser (never sent to any server except OpenRouter)
-- ✅ All code is **open source** and can be audited
-- ✅ No tracking, no analytics, no data collection
+- Your API key is stored **locally** in your browser (never sent to any server except OpenRouter)
+- All code is **open source** and can be audited
+- No tracking, no analytics, no data collection
 - ⚠️ The extension strips CSP headers to enable injection (required for functionality)
 - ⚠️ Generated JavaScript runs in the page context (review code before applying if concerned)
 
@@ -192,9 +180,10 @@ Built with:
 - [Alpine.js](https://alpinejs.dev/) - Reactive UI framework
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
 - [OpenRouter](https://openrouter.ai/) - Unified AI API
-- [Sharp](https://sharp.pixelplumbing.com/) - Icon generation
+- [Basecoat](http://basecoatui.com/) - UI Components, shadcn without React
 
 ## Support
 
 For issues or questions:
-- Open an issue on GitHub
+- Open an issue on GitHub.
+- Ask your `code assistant`, an `AGENTS.md` file is included.
