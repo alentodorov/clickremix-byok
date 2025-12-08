@@ -476,12 +476,11 @@
 
                 <!-- Template Library Section -->
                 <section id="template-library" class="space-y-2">
-                    <!-- Toggle header (when styles exist) -->
+                    <!-- Toggle header -->
                     <button
                         type="button"
                         class="flex w-full items-center justify-between rounded-lg px-2 py-1.5 -mx-2 text-left hover:bg-primary-foreground/65 transition-colors group cursor-pointer"
                         @click="toggleTemplates"
-                        x-show="styles.length > 0"
                     >
                         <div class="flex items-center gap-1">
                             <h3
@@ -501,23 +500,9 @@
                         ></i>
                     </button>
 
-                    <!-- Static header (when no styles) -->
-                    <div
-                        class="flex items-center gap-1 px-2 py-1.5 -mx-2"
-                        x-show="styles.length === 0"
-                    >
-                        <h3 class="text-sm font-semibold text-muted-foreground">
-                            Quick templates
-                        </h3>
-                        <span
-                            class="text-xs text-muted-foreground"
-                            x-text="'(' + templateLibrary.length + ')'"
-                        ></span>
-                    </div>
-
                     <!-- Template grid (collapsible) -->
                     <div
-                        x-show="templatesExpanded || styles.length === 0"
+                        x-show="templatesExpanded"
                         class="space-y-3"
                     >
                         <!-- Category tabs -->

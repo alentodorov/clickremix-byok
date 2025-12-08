@@ -940,6 +940,10 @@ function popupApp() {
           } else {
             this.styles = [];
           }
+          // Auto-expand templates when no styles exist
+          if (this.styles.length === 0) {
+            this.templatesExpanded = true;
+          }
         },
       );
     },
