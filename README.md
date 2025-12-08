@@ -4,18 +4,9 @@ An open-source Browser extension (Chrome, Safari) that lets you restyle or tweak
 
 ## Quick Demo
 
-
 <p align="center" width="100%">
 <video src="https://github.com/user-attachments/assets/317e2e62-c364-4f46-880f-1137c9bceb70" controls></video>
 </p>
-
-<p align="center" width="100%">
-<video src="https://github.com/user-attachments/assets/10d9a316-70cc-4e9f-ade6-0bd3ada3b9a2" controls></video>
-</p>
-
-
-
-
 
 ## Features
 
@@ -123,6 +114,11 @@ This compiles Tailwind CSS and creates the extension in the `extension/dist/` di
 - **Refine Styles**: Click on any saved style card to refine it with additional instructions
 - **Edit Code**: Use the menu (⋮) on any style to manually edit the CSS or JavaScript
 - **Track Usage**: See how many API calls you've made this month at the bottom of the popup
+
+<p align="center" width="100%">
+<video src="https://github.com/user-attachments/assets/ac961d8b-c7d9-4f2e-a39e-abdec30c946a" controls></video>
+</p>
+
 
 ## Development
 
