@@ -27,9 +27,9 @@
         x-init="init()"
         class="w-[420px] bg-muted/60 p-4 text-foreground"
     >
-        <div class="card gap-7 shadow-lg bg-background" x-cloak>
-            <header class="flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
+        <div class="card gap-5 shadow-lg bg-background" x-cloak>
+            <header class="flex items-start justify-between gap-4">
+                <div class="flex items-start gap-3">
                     <div
                         class="inline-flex h-[48px] w-[48px] items-center justify-center rounded-full border border-primary/30 bg-primary text-primary-foreground shadow-xs"
                         aria-hidden="true"
@@ -54,18 +54,15 @@
                             ></path>
                         </svg>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-1.5">
-                            <h1 class="text-base font-semibold tracking-tight">
+                    <div class="space-y-0">
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-lg font-semibold tracking-tight">
                                 ClickRemix
                             </h1>
-                            <span
-                                class="badge-secondary text-[10px] px-1.5 py-0.5"
-                                >BYOK</span
-                            >
+                            <span class="badge-secondary">BYOK</span>
                         </div>
-                        <p class="text-xs text-muted-foreground">
-                            <span x-text="hostname"></span>
+                        <p class="text-sm text-muted-foreground">
+                            Remix websites with AI.
                         </p>
                     </div>
                 </div>
@@ -73,7 +70,7 @@
                     id="btn-reset"
                     type="button"
                     class="btn-sm-outline"
-                    title="Reset all styles for this site"
+                    title="Disable all styles for this site"
                     @click="resetStyles"
                 >
                     <i
@@ -105,7 +102,6 @@
                                 @click="toggleTargetMode"
                                 :aria-pressed="targetModeActive"
                                 :aria-busy="targetBusy"
-                                :disabled="applyBusy || targetBusy"
                                 :class="targetModeActive
                 ? 'bg-secondary border-secondary text-secondary-foreground hover:bg-secondary/80'
                 : 'bg-card border-muted-foreground/10 text-foreground hover:bg-muted/80'"
@@ -139,7 +135,6 @@
                             <span
                                 id="target-hint"
                                 class="leading-tight"
-                                :class="(applyBusy || targetBusy) ? 'opacity-50' : ''"
                                 x-text="targetHint"
                             ></span>
                             <div class="flex items-center gap-2">
@@ -258,20 +253,22 @@
                             <h3 class="text-base font-semibold">
                                 Saved styles
                             </h3>
+                            <span
+                                id="style-hostname"
+                                class="text-xs font-semibold text-muted-foreground opacity-70"
+                                x-text="hostname ? '(' + hostname + ')' : ''"
+                            ></span>
                         </div>
                     </div>
                     <div
                         id="style-list"
-                        class="flex flex-col gap-2"
+                        class="flex flex-col gap-4"
                         x-show="styles.length > 0"
                     >
                         <template x-for="style in styles" :key="style.id">
                             <div
-                                class="group relative flex w-full items-center gap-3 rounded-lg border bg-card px-3 py-2 shadow-xs transition overflow-visible cursor-pointer"
-                                :class="[
-                                    !style.enabled ? 'bg-muted/50 border-border/50 hover:bg-primary/5 hover:border-primary/30' : 'hover:bg-primary/10 hover:border-primary/70 hover:shadow-sm',
-                                    isRefining(style) ? 'border-primary/70 bg-primary/10 shadow-sm ring-3 ring-primary/20' : ''
-                                ]"
+                                class="group relative flex w-full items-center gap-3 rounded-lg border bg-card px-4 py-3 shadow-xs transition overflow-visible hover:bg-primary/10 hover:border-primary/70 hover:shadow-sm cursor-pointer"
+                                :class="[!style.enabled ? 'bg-muted/50 border-border/50' : '', isRefining(style) ? 'border-primary/70 bg-primary/10 shadow-sm ring-3 ring-primary/20' : '']"
                                 @click="toggleRefiningFromCard(style)"
                             >
                                 <div
@@ -380,9 +377,9 @@
                                                     @click.stop.prevent="editStyleFromMenu(style)"
                                                 >
                                                     <i
-                                                        class="fa-solid fa-code text-[13px]"
+                                                        class="fa-solid fa-pen-to-square text-[13px]"
                                                     ></i>
-                                                    <span>Edit code</span>
+                                                    <span>Edit</span>
                                                 </button>
                                                 <button
                                                     type="button"
@@ -446,124 +443,82 @@
                     </div>
                     <template x-if="styles.length === 0">
                         <div
-                            class="flex items-center gap-2 rounded-md border border-dashed border-border/60 bg-white px-3 py-2.5"
+                            class="flex min-w-0 flex-col items-center justify-center gap-4 rounded-lg border bg-card px-4 py-6 shadow-xs text-center"
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                class="h-4 w-4 shrink-0 text-muted-foreground"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                            <header
+                                class="flex max-w-sm flex-col items-center gap-2 text-center"
                             >
-                                <path d="M14 4.1 12 6"></path>
-                                <path d="m5.1 8-2.9-.8"></path>
-                                <path d="m6 12-1.9 2"></path>
-                                <path d="M7.2 2.2 8 5.1"></path>
-                                <path
-                                    d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"
-                                ></path>
-                            </svg>
-                            <p class="text-xs text-muted-foreground">
-                                No styles yet — apply a change or try a
-                                template.
-                            </p>
+                                <div
+                                    class="mb-1 flex size-10 shrink-0 items-center justify-center bg-muted rounded-full text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-6"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    >
+                                        <path d="M14 4.1 12 6"></path>
+                                        <path d="m5.1 8-2.9-.8"></path>
+                                        <path d="m6 12-1.9 2"></path>
+                                        <path d="M7.2 2.2 8 5.1"></path>
+                                        <path
+                                            d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                <div class="flex flex-col gap-0">
+                                    <h3
+                                        class="text-base font-medium tracking-tight"
+                                    >
+                                        No saved styles yet
+                                    </h3>
+                                    <p
+                                        class="text-muted-foreground text-xs/relaxed"
+                                    >
+                                        Try one of these starter examples to get
+                                        going.
+                                    </p>
+                                </div>
+                            </header>
+                            <section
+                                class="flex w-full flex-col items-stretch gap-3"
+                            >
+                                <template
+                                    x-for="example in starterExamples"
+                                    :key="example.title"
+                                >
+                                    <button
+                                        type="button"
+                                        class="group relative flex w-full flex-col items-stretch gap-1.5 rounded-lg border bg-card px-3.5 py-2.5 text-left shadow-xs transition-all hover:bg-muted/60 cursor-pointer"
+                                        @click="applyExample(example)"
+                                    >
+                                        <div
+                                            class="flex items-start justify-between gap-2"
+                                        >
+                                            <p
+                                                class="text-sm font-medium text-foreground leading-snug"
+                                                x-text="example.title"
+                                            ></p>
+                                            <span
+                                                class="badge-outline text-[11px] shrink-0"
+                                                >Try it</span
+                                            >
+                                        </div>
+                                        <p
+                                            class="text-xs text-muted-foreground leading-relaxed"
+                                            x-text="example.description"
+                                        ></p>
+                                    </button>
+                                </template>
+                            </section>
                         </div>
                     </template>
                 </section>
 
-                <!-- Template Library Section -->
-                <section id="template-library" class="space-y-2">
-                    <!-- Toggle header -->
-                    <button
-                        type="button"
-                        class="flex w-full items-center justify-between rounded-lg px-2 py-1.5 -mx-2 text-left hover:bg-primary-foreground/65 transition-colors group cursor-pointer"
-                        @click="toggleTemplates"
-                        x-show="styles.length > 0"
-                    >
-                        <div class="flex items-center gap-1">
-                            <h3
-                                class="text-sm font-semibold text-muted-foreground group-hover:text-foreground transition-colors"
-                            >
-                                Quick templates
-                            </h3>
-                            <span
-                                class="text-xs text-muted-foreground"
-                                x-text="'(' + templateLibrary.length + ')'"
-                            ></span>
-                        </div>
-                        <i
-                            class="fa-solid text-xs text-muted-foreground transition-colors group-hover:text-primary"
-                            :class="templatesExpanded ? 'fa-chevron-up' : 'fa-chevron-down'"
-                            aria-hidden="true"
-                        ></i>
-                    </button>
-
-                    <!-- Template grid (collapsible) -->
-                    <div
-                        x-show="templatesExpanded || styles.length === 0"
-                        class="space-y-3"
-                    >
-                        <!-- Category tabs -->
-                        <div class="flex flex-wrap gap-1">
-                            <template
-                                x-for="category in templateCategories"
-                                :key="category.id"
-                            >
-                                <button
-                                    type="button"
-                                    class="flex items-center gap-1.5 whitespace-nowrap rounded-lg border px-2.5 py-1 text-[11px] font-medium transition-all"
-                                    :class="templateCategoryFilter === category.id
-                                        ? 'bg-accent text-accent-foreground border-accent'
-                                        : 'bg-transparent text-muted-foreground border-border hover:border-accent/70 hover:text-accent'"
-                                    @click="templateCategoryFilter = category.id"
-                                >
-                                    <i
-                                        class="fa-solid text-[9px]"
-                                        :class="category.icon"
-                                        aria-hidden="true"
-                                    ></i>
-                                    <span x-text="category.label"></span>
-                                </button>
-                            </template>
-                        </div>
-
-                        <!-- Template grid -->
-                        <div class="grid grid-cols-2 gap-2">
-                            <template
-                                x-for="template in filteredTemplates"
-                                :key="template.id"
-                            >
-                                <button
-                                    type="button"
-                                    class="group flex items-start gap-2 rounded-lg border bg-card px-2.5 py-2 text-left shadow-xs transition hover:bg-primary/10 hover:border-primary/70 cursor-pointer hover:-translate-y-0.5"
-                                    @click="applyExample(template)"
-                                    :title="template.description"
-                                >
-                                    <i
-                                        class="fa-solid text-[10px] text-muted-foreground mt-0.5 group-hover:text-primary transition-colors"
-                                        :class="template.icon"
-                                        aria-hidden="true"
-                                    ></i>
-                                    <div class="flex flex-col gap-0.5 min-w-0">
-                                        <p
-                                            class="text-xs font-medium text-foreground leading-tight line-clamp-2 group-hover:text-primary transition-colors"
-                                            x-text="template.title"
-                                        ></p>
-                                        <p
-                                            class="text-[10px] text-muted-foreground leading-tight line-clamp-2"
-                                            x-text="template.description"
-                                        ></p>
-                                    </div>
-                                </button>
-                            </template>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Message Count & Settings -->
+                <!-- Message Count Display -->
                 <section class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <p class="text-xs text-muted-foreground">

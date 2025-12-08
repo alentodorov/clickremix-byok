@@ -4,234 +4,26 @@ import Alpine from "./vendor/alpinejs-csp.esm.js";
 // Rate limit functions are loaded from ratelimit.js (loaded via script tag in popup.html)
 
 // ============================================================================
-// TEMPLATE LIBRARY
+// STARTER EXAMPLES
 // ============================================================================
 
-// Category configuration with icons and colors
-const categoryConfig = {
-  general: {
-    icon: "fa-globe",
-    color: "primary",
-    label: "General",
-  },
-  news: {
-    icon: "fa-newspaper",
-    color: "secondary",
-    label: "News",
-  },
-  chat: {
-    icon: "fa-message",
-    color: "accent",
-    label: "AI Chat",
-  },
-  social: {
-    icon: "fa-share-nodes",
-    color: "chart-5",
-    label: "Social",
-  },
-  shopping: {
-    icon: "fa-cart-shopping",
-    color: "chart-3",
-    label: "Shopping",
-  },
-  fun: {
-    icon: "fa-face-laugh-squint",
-    color: "chart-2",
-    label: "Fun",
-  },
-};
-
-const templateLibrary = [
-  // General - works on any site
+const starterExamples = [
   {
-    id: "dark-mode",
-    title: "Dark mode",
-    description: "Comfortable dark theme for any site",
-    category: "general",
-    icon: "fa-moon",
-    instruction:
-      "Switch the page to a soft dark mode: dark charcoal background, dimmed text, muted accents, and ensure links remain visible with a subtle blue tint. Preserve the layout and functionality.",
-  },
-  {
-    id: "focus-mode",
-    title: "Focus mode",
-    description: "Dim everything except main content",
-    category: "general",
-    icon: "fa-crosshairs",
-    instruction:
-      "Enable focus mode: identify the main content area and highlight it with full opacity, while dimming all surrounding elements (navigation, sidebars, ads) to 30% opacity with a slight blur effect.",
-  },
-  {
-    id: "kill-sticky",
-    title: "Kill sticky headers",
-    description: "Remove fixed navbars eating screen space",
-    category: "general",
-    icon: "fa-thumbtack",
-    instruction:
-      "Find all fixed or sticky positioned elements (headers, navbars, floating buttons, cookie banners) and change them to static positioning so they scroll with the page instead of staying fixed on screen.",
-  },
-  {
-    id: "larger-text",
-    title: "Larger text",
-    description: "Increase all text sizes by 50%",
-    category: "general",
-    icon: "fa-text-height",
-    instruction:
-      "Increase all text sizes by 50%: scale up all fonts proportionally, increase line height to 1.6, add more padding around interactive elements, and ensure the layout adapts without breaking.",
-  },
-  {
-    id: "sepia-reading",
-    title: "Sepia mode",
-    description: "Warm beige tones for comfortable reading",
-    category: "general",
-    icon: "fa-book-open",
-    instruction:
-      "Transform the page into a sepia-toned reading mode: warm beige background (#F4F1EA), dark brown text (#3E2723), soft edges, increase line height to 1.8, and use a serif font for body text.",
-  },
-
-  // News - news sites
-  {
-    id: "archive-links",
-    title: "Archive.is links",
-    description: "Open articles through archive.is",
-    category: "news",
-    icon: "fa-box-archive",
-    instruction:
-      "Find all internal article links on this news site and modify them to open through archive.is instead. For each link, prepend 'https://archive.is/' to the original URL. Add a small archive icon next to modified links to indicate they will open the archived version.",
-  },
-  {
-    id: "remove-paywall-overlay",
-    title: "Remove overlay",
-    description: "Hide subscribe popups and overlays",
-    category: "news",
-    icon: "fa-eye-slash",
-    instruction:
-      "Remove any modal overlays, paywall popups, 'subscribe to continue reading' banners, and blur effects that block the article content. Also remove any scroll-blocking on the body element.",
-  },
-
-  // Chat - AI chat interfaces
-  {
-    id: "chat-clean-copy",
-    title: "Clean copy button",
-    description: "Copy AI responses without formatting",
-    category: "chat",
-    icon: "fa-copy",
-    instruction:
-      "Add a 'Copy clean' button next to each AI response in this chat interface. When clicked, it should copy the response text without any markdown formatting, code block syntax, or 'As an AI...' type intros - just the plain useful content.",
-  },
-  {
-    id: "chat-edit-response",
-    title: "Edit response button",
-    description: "Add ability to edit AI responses",
-    category: "chat",
-    icon: "fa-pen-to-square",
-    instruction:
-      "Add an 'Edit' button next to each AI response in this chat interface. When clicked, it should make the response text editable in place, allowing users to modify the AI's response. Include 'Save' and 'Cancel' buttons that appear when editing. The edited text should replace the original response when saved.",
-  },
-  {
-    id: "chat-print-response",
-    title: "Print response button",
-    description: "Print AI response in new tab",
-    category: "chat",
-    icon: "fa-print",
-    instruction:
-      "Add a 'Print' button next to each AI response in this chat interface. When clicked, it should open a new tab containing only that AI response (with proper formatting preserved), and automatically trigger the browser's print dialog for the user to print it.",
-  },
-  {
-    id: "chat-wider",
-    title: "Wider chat",
-    description: "Expand chat area to full width",
-    category: "chat",
-    icon: "fa-arrows-left-right",
-    instruction:
-      "Expand the chat conversation area to use more horizontal space. Remove or reduce side margins, make the message container wider, and let code blocks use more width. Keep it readable but use available screen space.",
-  },
-
-  // Social - social media feeds
-  {
-    id: "social-hide-promoted",
-    title: "Hide promoted posts",
-    description: "Remove ads and sponsored content",
-    category: "social",
-    icon: "fa-ban",
-    instruction:
-      "Hide all promoted posts, sponsored content, and advertisements from this social media feed. Look for posts marked as 'Promoted', 'Sponsored', 'Ad', or similar labels and hide them completely.",
-  },
-  {
-    id: "social-hide-suggestions",
-    title: "Hide suggestions",
-    description: "Remove 'who to follow' and recommendations",
-    category: "social",
-    icon: "fa-user-minus",
-    instruction:
-      "Hide all 'Who to follow', 'Suggested for you', 'People you may know', and similar recommendation sections from this social media site. Keep the main feed but remove the suggestions.",
-  },
-
-  // Shopping - marketplaces
-  {
-    id: "shopping-dim-dark-patterns",
-    title: "Dim dark patterns",
-    description: "Fade urgency and pressure tactics",
-    category: "shopping",
-    icon: "fa-eye-low-vision",
-    instruction:
-      "Dim dark pattern elements on this shopping site to 20% opacity: fake urgency messages ('Only 2 left!', 'Sale ends in...'), countdown timers, 'X people are viewing this', 'Y people bought this today', low stock warnings, and other pressure tactics. On mouse hover, restore them to full opacity so they're still readable if needed.",
-  },
-  {
-    id: "shopping-focus-product",
-    title: "Focus on product",
-    description: "Dim everything except product details",
-    category: "shopping",
-    icon: "fa-crosshairs",
-    instruction:
-      "Identify the core product information (title, price, images, description, specifications) and keep it fully visible. Dim or hide everything else: recommendations, 'frequently bought together', sponsored products, ads, and other distractions. Help focus on just the product being viewed.",
-  },
-
-  // Fun - just for laughs
-  {
-    id: "comic-sans",
-    title: "Comic Sans everything",
-    description: "Change all fonts to Comic Sans MS",
-    category: "fun",
-    icon: "fa-font",
-    instruction:
-      "Replace every font on the page with Comic Sans MS. Make sure headings, body text, buttons, and even code blocks all use Comic Sans. Embrace the chaos.",
-  },
-  {
-    id: "matrix-effect",
-    title: "Matrix effect",
-    description: "Green CRT-style text with glow",
-    category: "fun",
-    icon: "fa-code",
-    instruction:
-      "Apply a Matrix-style effect: black background, phosphor green (#39FF14) monospace text with a subtle glow, add CRT scanline animation, slight text flicker, and make the page feel like a 1990s computer terminal.",
-  },
-  {
-    id: "rainbow-mode",
-    title: "Rainbow mode",
-    description: "Add colorful gradients everywhere",
-    category: "fun",
-    icon: "fa-rainbow",
-    instruction:
-      "Add rainbow flair to the page: apply subtle animated rainbow gradient backgrounds to headers, add colorful borders to cards and containers, make links cycle through rainbow colors on hover, and add gentle color transitions throughout.",
-  },
-  {
-    id: "replace-trump",
-    title: "Replace Trump with emoji",
+    title: "Replace Trump with 🤡 emoji",
     description: "Bring some fun to your news",
-    categories: ["fun", "news"],
-    icon: "fa-face-grin-squint-tears",
-    instruction:
-      "Replace all mentions of 'Trump' with a clown emoji throughout the page.",
+    instruction: "Replace Trump with 🤡",
   },
   {
-    id: "replace-ai",
-    title: "Replace AI with emoji",
-    description: "For when you're tired of AI hype",
-    categories: ["fun", "news"],
-    icon: "fa-face-rolling-eyes",
+    title: "Cozy dark theme",
+    description: "A night theme without breaking layouts.",
     instruction:
-      "Replace all mentions of 'AI' and 'artificial intelligence' with a rolling eyes emoji throughout the page.",
+      "Switch the page to a soft dark mode: dark charcoal background, dimmed text, muted accents, and ensure links remain visible with a subtle blue tint.",
+  },
+  {
+    title: "Reduce visual clutter",
+    description: "Cleaner layout by hiding noisy elements.",
+    instruction:
+      "Reduce visual noise by dimming or soft-hiding non-essential page elements such as large sidebars, loud banners, or oversized footers, while keeping core content fully intact.",
   },
 ];
 
@@ -271,10 +63,6 @@ function popupApp() {
     // Iteration state
     refiningStyle: null,
 
-    // Template library state
-    templatesExpanded: false,
-    templateCategoryFilter: "all",
-
     // Editor state
     editorOpen: false,
     editingStyle: null,
@@ -303,8 +91,7 @@ function popupApp() {
     rateLimitInterval: null,
 
     // Static data
-    templateLibrary,
-    categoryConfig,
+    starterExamples,
 
     // Runtime
     handleRuntimeMessage: null,
@@ -341,62 +128,6 @@ function popupApp() {
     get editorTitleText() {
       if (!this.editingStyle) return "Customize this style with code.";
       return this.editingStyle.summary || `Style #${this.editingStyle.id}`;
-    },
-
-    getTemplateCategories(template) {
-      if (!template) return [];
-      if (template.categories) return template.categories;
-      if (template.category) return [template.category];
-      return [];
-    },
-
-    get templateCategories() {
-      const counts = {};
-      const order = [];
-
-      this.templateLibrary.forEach((template) => {
-        const cats = this.getTemplateCategories(template);
-        cats.forEach((cat) => {
-          if (counts[cat] === undefined) {
-            counts[cat] = 0;
-            order.push(cat);
-          }
-          counts[cat] += 1;
-        });
-      });
-
-      const categories = [
-        {
-          id: "all",
-          label: "All",
-          icon: "fa-border-all",
-          color: "foreground",
-          count: this.templateLibrary.length,
-        },
-      ];
-
-      order.forEach((category) => {
-        const config = this.categoryConfig[category] || {};
-        categories.push({
-          id: category,
-          label: config.label || this.formatCategoryLabel(category),
-          icon: config.icon || "fa-folder",
-          color: config.color || "muted-foreground",
-          count: counts[category],
-        });
-      });
-
-      return categories;
-    },
-
-    get filteredTemplates() {
-      if (this.templateCategoryFilter === "all") {
-        return this.templateLibrary;
-      }
-      return this.templateLibrary.filter((template) => {
-        const cats = this.getTemplateCategories(template);
-        return cats.includes(this.templateCategoryFilter);
-      });
     },
 
     isRefining(style) {
@@ -659,7 +390,6 @@ function popupApp() {
 
     focusInstructionInput() {
       requestAnimationFrame(() => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
         const el = this.$refs.instruction;
         if (!el) return;
         const end = el.value.length;
@@ -687,21 +417,10 @@ function popupApp() {
     },
 
     applyInstruction() {
-      this.focusInstructionInput();
       const trimmedInstruction =
         typeof this.instruction === "string" ? this.instruction.trim() : "";
       if (!trimmedInstruction) {
         this.setStatus("Enter a change to apply.", "error");
-        const textarea = this.$refs.instruction;
-        const targetButton = document.getElementById("btn-target-mode");
-        if (textarea) {
-          textarea.classList.add("shake");
-          setTimeout(() => textarea.classList.remove("shake"), 500);
-        }
-        if (targetButton) {
-          targetButton.classList.add("shake");
-          setTimeout(() => targetButton.classList.remove("shake"), 500);
-        }
         return;
       }
       if (!this.activeTabId) {
@@ -709,11 +428,11 @@ function popupApp() {
         return;
       }
 
-      // Only persist if it's not a template instruction
-      const isTemplate = this.templateLibrary.some(
-        (tmpl) => tmpl.instruction === trimmedInstruction,
+      // Only persist if it's not an example instruction
+      const isExample = this.starterExamples.some(
+        (ex) => ex.instruction === trimmedInstruction,
       );
-      if (!isTemplate) {
+      if (!isExample) {
         this.persistInstruction(trimmedInstruction);
       }
 
@@ -764,17 +483,6 @@ function popupApp() {
       this.focusInstructionInput();
       // Don't persist example instructions to storage
       this.applyInstruction();
-    },
-
-    toggleTemplates() {
-      this.templatesExpanded = !this.templatesExpanded;
-    },
-
-    formatCategoryLabel(value) {
-      if (!value) return "";
-      const first = value.charAt(0).toUpperCase();
-      const rest = value.slice(1);
-      return first + rest;
     },
 
     toggleTargetMode() {
