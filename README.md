@@ -9,6 +9,11 @@ An open-source Browser extension (Chrome, Safari) that lets you restyle or tweak
 <video src="https://github.com/user-attachments/assets/317e2e62-c364-4f46-880f-1137c9bceb70" width="80%" controls></video>
 </p>
 
+<p align="center" width="100%">
+<video src="https://github.com/user-attachments/assets/5f37048b-d91c-4138-b29d-33c0249c75a7" width="80%" controls></video>
+</p>
+
+
 ## Features
 
 - Modify any website with natural language instructions
