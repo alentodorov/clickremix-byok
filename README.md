@@ -11,7 +11,7 @@ An open-source Browser extension (Chrome, Safari) that lets you restyle or tweak
 ## Features
 
 - Modify any website with natural language instructions
-- Use your own OpenRouter API key (no subscriptions, no limits)
+- Use your own OpenRouter API key
 - Target specific elements on the page
 - Save and manage multiple styles per site
 - Refine existing styles with follow-up instructions
@@ -80,7 +80,7 @@ This compiles Tailwind CSS and creates the extension in the `extension/dist/` di
 2. Enable "Developer mode" (toggle in top-right)
 3. Click "Load unpacked" and select the `extension/dist/` directory
 
-### 3 (Alternative). Load in Safari
+### 3 (Alternative). Load in Safari (iPhone too with Apple Developer Account)
 
 1. Open Safari and go to **Safari** → **Settings** (or **Preferences**)
 2. Navigate to the **Advanced** tab
@@ -165,15 +165,6 @@ This watches `extension/src/` and automatically rebuilds on file changes. Just r
 - **DNR Rules** (`rules.json`):
   - Strips CSP headers to allow injection on strict sites
 
-### Data Flow
-
-```
-Popup → Content Script → Background Worker → OpenRouter API
-  ↓                                              ↓
-  ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ← ←
-  ↓
-Inject CSS/JS into Page
-```
 
 ## API Costs
 
