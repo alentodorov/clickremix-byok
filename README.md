@@ -4,9 +4,9 @@ An open-source Browser extension (Chrome, Safari) that lets you restyle or tweak
 
 ## Quick Demo
 
-
-<video src="https://github.com/user-attachments/assets/3172e6e2-c364-4f46-880f-1137c9bceb70" controls width="100%"></video>
-
+<p align="center" width="100%">
+<video src="https://github.com/user-attachments/assets/3172e6e2-c364-4f46-880f-1137c9bceb70" controls></video>
+</p>
 
 ## Features
 
