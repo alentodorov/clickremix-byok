@@ -4,6 +4,14 @@ An open-source Browser extension (Chrome, Safari) that lets you restyle or tweak
 
 
 
+## Quick Demo
+
+<video controls width="960">
+  <source src="quick-demo.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+
 ## Features
 
 - Modify any website with natural language instructions
