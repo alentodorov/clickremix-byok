@@ -140,31 +140,6 @@ This watches `extension/src/` and automatically rebuilds on file changes. Just r
 | `npm run dev` | Development mode: watch and rebuild on changes |
 | `npm run sync:alpine` | Update vendored Alpine.js |
 
-## Architecture
-
-### Extension Components
-
-- **Background Service Worker** (`background.js`):
-  - Handles API calls to OpenRouter
-  - Manages API key storage
-  - Executes JavaScript in the main world context
-
-- **Content Script** (`contentScript.js`):
-  - Scrapes page content for AI context
-  - Injects generated styles and scripts
-  - Manages style persistence per domain
-
-- **Popup** (`popup.html/js`):
-  - Main UI for instructions and style management
-  - Uses Alpine.js for reactive state
-
-- **Settings** (`settings.html/js`):
-  - API key and model configuration
-  - Opened via gear icon in popup
-
-- **DNR Rules** (`rules.json`):
-  - Strips CSP headers to allow injection on strict sites
-
 
 ## API Costs
 
