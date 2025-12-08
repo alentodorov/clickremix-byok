@@ -5,7 +5,7 @@ An open-source Browser extension (Chrome, Safari) that lets you restyle or tweak
 ## Quick Demo
 
 <video controls width="960">
-  <source src="https://github.com/user-attachments/assets/4ba03167-7337-445e-ae1b-aefc4faa6e97" type="video/mp4" />
+  <source src="https://github.com/user-attachments/assets/4ba03167-7337-445e-ae1b-aefc4faa6e97.mp4" type="video/mp4" />
   Your browser does not support the video tag.
 </video>
 
