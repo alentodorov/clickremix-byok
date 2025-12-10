@@ -1,6 +1,8 @@
 # ClickRemix (BYOK Version)
 
-An open-source Browser extension (Chrome, Safari) that lets you restyle or tweak any webpage with natural-language prompts. It works with your own OpenRouter API key so you can use any AI model to generate the CSS and JavaScript changes. You only pay for the generation step; applying the saved code costs nothing further. If you prefer not to use a personal key, you can switch to the hosted version at [ClickRemix](https://clickremix.com/).
+An open-source Browser extension (Chrome, Safari) that lets you restyle or tweak any webpage with natural-language prompts. It works with your own OpenRouter API key so you can use any AI model to generate the CSS and JavaScript changes. 
+
+If you prefer not to use a personal key, you can switch to the hosted version at [ClickRemix](https://clickremix.com/).
 
 ## Quick Demo
 
